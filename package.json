@@ -1,0 +1,32 @@
+{
+  "name": "spotify-np-obs",
+  "version": "1.0.0",
+  "main": "./lib/listen.js",
+  "author": "shepherd",
+  "license": "none",
+  "private": true,
+  "scripts": {
+    "build": "babel src -d lib",
+    "start": "babel src -d lib && node lib/listen.js"
+  },
+  "dependencies": {
+    "@fastify/static": "^6.5.0",
+    "colors": "^1.4.0",
+    "dotenv": "^16.0.1",
+    "fastify": "^4.5.2",
+    "open": "^8.4.0",
+    "spotify-web-api-node": "^5.0.2",
+    "ws": "^8.8.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.10",
+    "@babel/node": "^7.18.10",
+    "@babel/plugin-proposal-export-default-from": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
+    "@babel/preset-flow": "^7.18.6",
+    "babel-plugin-const-enum": "^1.2.0",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "babel-preset-minify": "^0.5.2"
+  }
+}

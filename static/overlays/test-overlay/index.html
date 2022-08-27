@@ -1,0 +1,73 @@
+<head>
+    <script src="ws.js"></script>
+</head>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&display=swap');
+
+*
+{
+    font-family: 'Nunito', sans-serif;
+}
+.main-block
+{
+    display: flex;
+    width: 450px;
+    height: 64px;
+    background: #222;
+    border-radius: 12px;
+    box-shadow: 4px 4px 16px rgba(0,0,0,0.2);
+}
+
+.main-block > .insides
+{
+    padding: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.main-block > .insides > .album-cover
+{
+    float: left;
+    width: 48px;
+    height: 48px;
+    border-radius: 4px;
+}
+.main-block > .insides > .additional-info
+{
+    padding: 12px;
+    color: white;
+    font-weight: 800;
+}
+</style>
+
+<body>
+    <div class="main-block">
+        <div class="insides">
+            <img class="album-cover" id="album-cover" src="">
+            <div class="additional-info">
+                <span id="title"></span>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+let socket = new ReconnectingWebSocket("ws://" + location.hostname + ":9897/");
+var LAST_ONE = "";
+socket.onopen = () => {
+    console.log("Successfully Connected");
+};
+socket.onclose = event => {
+    console.log("Socket Closed Connection: ", event);
+    socket.send("Client Closed!");
+};
+socket.onerror = error => {
+    console.log("Socket Error: ", error);
+};
+socket.onmessage = event => {
+    let data = JSON.parse(event.data);
+    if(data[1].item.id == LAST_ONE) return;
+    document.getElementById("album-cover").src = data[1].item.album.images[0].url;
+    document.getElementById("title").innerText = `${data[1].item.artists.map(artist => artist.name).join(', ') } - ${data[1].item.name}`;
+    LAST_ONE = data[1].item.id;
+}
+</script>
