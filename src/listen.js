@@ -14,12 +14,13 @@ const wsh = new WebSocketHandler();
     while (!WebClient.IsReady)
         await new Promise(resolve => setTimeout(resolve, 500));
 
-    open(BuildSpotifyAuthLink(process.env.CLIENT_ID, "code", process.env.CLIENT_REDIRECT_URI));
-    Output.Log("Waiting for user to authenticate...");
-    while (!WebClient.HasReturnedCode)
-        await new Promise(resolve => setTimeout(resolve, 500));
-    
-    await spotify.authorize(WebClient.CodeReturned);
-    
+    if(!spotify.isAuthorizationSaved)
+    {
+        open(BuildSpotifyAuthLink(process.env.CLIENT_ID, "code", process.env.CLIENT_REDIRECT_URI));
+        Output.Log("Waiting for user to authenticate...");
+        while (!WebClient.HasReturnedCode)
+            await new Promise(resolve => setTimeout(resolve, 500));
+        await spotify.authorize(WebClient.CodeReturned);
+    }
     LoopedListener(wsh, spotify);
 })().catch((e) => { throw e; });

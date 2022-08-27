@@ -13,7 +13,52 @@ export class SpotifyHelper
             redirectUri: process.env.CLIENT_REDIRECT_URI
         });
         this.Output = new PresetOutput("spotify");
+        this.isAuthorizationSaved = false;
+        this.CheckForSavedAuthorizationCode();
         this.authorization_data = null;
+    }
+
+    CheckForSavedAuthorizationCode()
+    {
+        if(fs.existsSync("._config.json"))
+        {
+            var _config = JSON.parse(fs.readFileSync("._config.json"));
+            if(_config.access_token && _config.refresh_token && _config.token_expirationepoch)
+            {
+                this.spotifyApi.setAccessToken(_config.access_token);
+                this.spotifyApi.setRefreshToken(_config.refresh_token);
+                this.tokenExpirationEpoch = _config.token_expirationepoch;
+                this.isAuthorizationSaved = true;
+                this.AnnounceAuthorization(true);
+                this.CheckForNeededRefresh();
+                return;
+            }
+        }
+        else
+        {
+            fs.writeFileSync("._config.json", JSON.stringify({
+                access_token: "",
+                refresh_token: "",
+                token_expirationepoch: 0
+            }));    
+        }
+
+    }
+
+    async AnnounceAuthorization(cached)
+    {
+        this.me = await this.spotifyApi.getMe();
+        this.Output.Log(`Logged in as ${this.me.body.display_name.cyan}${cached ? ' from cache' : ''}.`);
+    }
+
+    async CheckForNeededRefresh()
+    {
+        if (this.tokenExpirationEpoch < new Date().getTime() / 1000)
+        {
+            console.log(this);
+            this.Output.Log("Token expired. Refreshing...");
+            this.spotifyApi.refreshAccessToken();
+        }
     }
 
     async authorize(code_grant)
@@ -24,20 +69,21 @@ export class SpotifyHelper
         this.spotifyApi.setRefreshToken(_auth_data.body['refresh_token']);
         this.tokenExpirationEpoch =
             new Date().getTime() / 1000 + _auth_data.body['expires_in'];
-        console.log(
-        'Retrieved token. It expires in ' +
-            Math.floor(this.tokenExpirationEpoch - new Date().getTime() / 1000) +
-            ' seconds!'
-        );
-        this.authorization_data = _auth_data;
-        this.me = await this.spotifyApi.getMe();
 
-        this.Output.Log(`Logged in as ${this.me.body.display_name.cyan}.`);
+        fs.writeFileSync("._config.json", JSON.stringify({
+            access_token: _auth_data.body['access_token'],
+            refresh_token: _auth_data.body['refresh_token'],
+            token_expirationepoch: this.tokenExpirationEpoch
+        }));
+
+        this.authorization_data = _auth_data;
+        await this.AnnounceAuthorization();
         return true;
     }
 
     async GetState()
     {
+        await this.CheckForNeededRefresh();
         try
         {
             var _playbackState = await this.spotifyApi.getMyCurrentPlaybackState();
