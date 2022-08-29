@@ -57,7 +57,8 @@ export class SpotifyHelper
         {
             console.log(this);
             this.Output.Log("Token expired. Refreshing...");
-            this.spotifyApi.refreshAccessToken();
+            var _d = await this.spotifyApi.refreshAccessToken();
+            this.spotifyApi.setAccessToken(_d.body['access_token']);
         }
     }
 
