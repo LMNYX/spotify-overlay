@@ -2,7 +2,7 @@
   "name": "spotify-np-obs",
   "version": "1.0.0",
   "main": "./lib/listen.js",
-  "author": "shepherd",
+  "author": "mishashto",
   "license": "none",
   "private": true,
   "scripts": {
