@@ -42,7 +42,7 @@
 </style>
 
 <body>
-    <div class="main-block">
+    <div class="main-block" style="opacity: 0;">
         <div class="insides">
             <img class="album-cover" id="album-cover" src="">
             <div class="additional-info">
@@ -54,6 +54,7 @@
 <script>
 let socket = new ReconnectingWebSocket("ws://" + location.hostname + ":9897/");
 var LAST_ONE = "";
+var WAS_PLAYING = false;
 socket.onopen = () => {
     console.log("Successfully Connected");
 };
@@ -66,7 +67,30 @@ socket.onerror = error => {
 };
 socket.onmessage = event => {
     let data = JSON.parse(event.data);
-    if(data[1].item.id == LAST_ONE) return;
+
+    if(data[1].is_playing != WAS_PLAYING)
+    {
+        if(data[1].is_playing)
+        {
+            anime({
+                targets: '.main-block',
+                opacity: 1,
+                duration: 500,
+                easing: 'easeInOutQuad'
+            });
+        }
+        else
+        {
+            anime({
+                targets: '.main-block',
+                opacity: 0,
+                duration: 500,
+                easing: 'easeInOutQuad'
+            });
+        }
+        WAS_PLAYING = data[1].is_playing;
+    }
+    if (data[1].item.id == LAST_ONE) return;
 
     anime({
         targets: '#title',
