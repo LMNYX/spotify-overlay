@@ -13,7 +13,7 @@ yarn start # or npm start
 
 1. Create a new folder in the `overlays` folder and name it whatever you want.
 2. Create a new HTML file, which will be the main file of your overlay.
-3. Copy ws.js from test-overlay folder and connect to the WebSocket server by using the following code:
+3. Copy `ws.js` from test-overlay folder and connect to the WebSocket server by using the following code:
 
 ```js
 let socket = new ReconnectingWebSocket("ws://" + location.hostname + ":9897/");
