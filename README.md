@@ -4,9 +4,20 @@ This is a simple overlay, which is highly customizable for OBS Studio that displ
 
 ## Installation
 
+1. Clone the repository;
+2. Install the dependencies by running `yarn` or `npm install`;
+
 ```bash
 yarn       # or npm install
 yarn start # or npm start
+```
+
+3. Create `.env` file in the root directory and add the following environment variables from your Spotify app:
+
+```bash
+CLIENT_ID=...
+CLIENT_SECRET=...
+CLIENT_REDIRECT_URI=...
 ```
 
 ## Customization
