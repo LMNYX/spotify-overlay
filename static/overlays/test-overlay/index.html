@@ -1,4 +1,5 @@
 <head>
+    <script src="anime.min.js"></script>
     <script src="ws.js"></script>
 </head>
 <style>
@@ -66,8 +67,46 @@ socket.onerror = error => {
 socket.onmessage = event => {
     let data = JSON.parse(event.data);
     if(data[1].item.id == LAST_ONE) return;
-    document.getElementById("album-cover").src = data[1].item.album.images[0].url;
-    document.getElementById("title").innerText = `${data[1].item.artists.map(artist => artist.name).join(', ') } - ${data[1].item.name}`;
+
+    anime({
+        targets: '#title',
+        opacity: 0,
+        scale: 0.5,
+        duration: 500,
+        easing: 'easeInOutQuad',
+        complete: function(anim) {
+            document.getElementById("title").innerHTML = data[1].item.name;
+            anime({
+                targets: '#title',
+                opacity: 1,
+                scale: 1,
+                duration: 500,
+                easing: 'easeInOutQuad'
+            });
+        }
+    });
+
+    // same with the album cover but wait for the image to load
+    anime({
+        targets: '#album-cover',
+        opacity: 0,
+        scale: 0.5,
+        duration: 500,
+        easing: 'easeInOutQuad',
+        complete: function(anim) {
+            document.getElementById("album-cover").src = data[1].item.album.images[0].url;
+            document.getElementById("album-cover").onload = function() {
+                anime({
+                    targets: '#album-cover',
+                    opacity: 1,
+                    scale: 1,
+                    duration: 500,
+                    easing: 'easeInOutQuad'
+                });
+            }
+        }
+    });
+
     LAST_ONE = data[1].item.id;
 }
 </script>

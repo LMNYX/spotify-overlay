@@ -9,6 +9,7 @@ export class WebSocketHandler
         this.ws = new WebSocketServer({
             port: 9897
         });
+        this.Output.Log("WebSocket server started on port 9897");
     }
 
     request_broadcast(message)
