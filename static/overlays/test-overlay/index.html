@@ -75,7 +75,7 @@ socket.onmessage = event => {
         duration: 500,
         easing: 'easeInOutQuad',
         complete: function(anim) {
-            document.getElementById("title").innerHTML = data[1].item.name;
+            document.getElementById("title").innerHTML = `${data[1].item.artists.map(artist => artist.name).join(', ')} - ${data[1].item.name}`;
             anime({
                 targets: '#title',
                 opacity: 1,
