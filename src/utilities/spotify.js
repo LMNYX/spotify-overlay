@@ -58,10 +58,9 @@ export class SpotifyHelper
             console.log(this);
             this.Output.Log("Token expired. Refreshing...");
             var _d = await this.spotifyApi.refreshAccessToken();
-            this.spotifyApi.setRefreshToken(_d.body['refresh_token']);
             this.spotifyApi.setAccessToken(_d.body['access_token']);
             this.tokenExpirationEpoch =
-            new Date().getTime() / 1000 + _d.body['expires_in'];
+            new Date().getTime() / 1000 + _d.body['expires_in'] - 5;
             fs.writeFileSync("._config.json", JSON.stringify({
                 access_token: _d.body['access_token'],
                 refresh_token: _d.body['refresh_token'],
@@ -77,7 +76,7 @@ export class SpotifyHelper
         this.spotifyApi.setAccessToken(_auth_data.body['access_token']);
         this.spotifyApi.setRefreshToken(_auth_data.body['refresh_token']);
         this.tokenExpirationEpoch =
-            new Date().getTime() / 1000 + _auth_data.body['expires_in'];
+            new Date().getTime() / 1000 + _auth_data.body['expires_in'] - 5;
 
         fs.writeFileSync("._config.json", JSON.stringify({
             access_token: _auth_data.body['access_token'],
